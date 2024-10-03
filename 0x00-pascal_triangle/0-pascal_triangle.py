@@ -1,17 +1,22 @@
 #!/usr/bin/python3
+"""This module defines a pascal triangle function."""
+
 
 def pascal_triangle(n):
-    triangle = []
+    """Computes a Pascal Triangle.
 
-    if n > 0:
-        for i in range(0, n):
-            coefs = []
-            for j in range(i+1):
-                if (j == 0) or (j == i):
-                    coefs.insert(j, 1)
-                else:
-                    coef = triangle[i-1][j-1] + triangle[i-1][j]
-                    coefs.insert(j, coef)
-            triangle.append(coefs)
+    Args:
+        n (integer): The amount of rows to compute.
+    Returns:
+        A matrix containing the computed coeficients or any list otherwise.
+    """
+    if n <= 0:
+        return []
+
+    triangle = [[1] * (i + 1) for i in range(n)]
+
+    for i in range(2, n):
+        for j in range(1, i):
+            triangle[i][j] = triangle[i-1][j-1] + triangle[i-1][j]
 
     return triangle
