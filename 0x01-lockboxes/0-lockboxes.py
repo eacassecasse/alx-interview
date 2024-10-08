@@ -40,11 +40,17 @@ def canUnlockAll(boxes):
     Returns:
         True if all the boxes can be unlocked, False otherwise.
     """
-    if type(boxes) == list and all(type(box) == list for box in boxes):
-        graph = toGraph(boxes)
-        return all(graph.dfs(0))
+    size = len(boxes)
+    graph = Graph(size)
 
-    return False
+    for i in range(0, size):
+        for key in boxes[i]:
+            if 0 <= key < size:
+                graph.add_edge(i, key)
+
+    visited = graph.dfs(0)
+
+    return size == sum(visited)
 
 
 def toGraph(boxes):
