@@ -1,18 +1,20 @@
 #!/usr/bin/python3
 """ This module definies a canUnlockAll function """
 
+from collections import deque
+
 
 def canUnlockAll(boxes):
     """ Checks whether all the boxes can be unlocked.
     """
     size = len(boxes)
     visited = set([0])
-    not_visited = set(boxes[0]).difference(set([0]))
-    while len(not_visited) > 0:
-        idx = not_visited.pop()
-        if not idx or idx >= size or idx < 0:
+    not_visited = deque(boxes[0])
+
+    while not_visited:
+        idx = not_visited.popleft()
+        if idx >= size or idx < 0 or idx in visited:
             continue
-        if idx not in visited:
-            not_visited = not_visited.union(boxes[idx])
-            visited.add(idx)
+        visited.add(idx)
+        not_visited.extend(boxes[idx])
     return size == len(visited)
