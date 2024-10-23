@@ -8,12 +8,19 @@ def parse_input(log_line):
     Extracts IP address, status code, and size from a log line in a specific
     format and returns them in a dictionary.
     """
+    # pattern = (
+    #     r'(?P<ip>\d{1,3}(?:\.\d{1,3}){3}) - '
+    #     r'\[(?P<timestamp>[\d-]+\s[\d:.]+)\] '
+    #     r'"(?P<method>[A-Z]+) (?P<path>[^\s]+) HTTP/[0-9.]+" '
+    #     r'(?P<status>\d{3}) '
+    #     r'(?P<size>\d+)'
+    # )
     pattern = (
-        r'(?P<ip>\d{1,3}(?:\.\d{1,3}){3}) - '
-        r'\[(?P<timestamp>[\d-]+\s[\d:.]+)\] '
-        r'"(?P<method>[A-Z]+) (?P<path>[^\s]+) HTTP/[0-9.]+" '
-        r'(?P<status>\d{3}) '
-        r'(?P<size>\d+)'
+        r'\s*(?P<ip>\S+)\s*',
+        r'\s*\[(?P<date>\d+\-\d+\-\d+ \d+:\d+:\d+\.\d+)\]',
+        r'\s*"(?P<request>[^"]*)"\s*',
+        r'\s*(?P<status_code>\S+)',
+        r'\s*(?P<file_size>\d+)'
     )
 
     result = {
@@ -21,7 +28,11 @@ def parse_input(log_line):
         'size': 0
     }
 
-    match = re.fullmatch(pattern, log_line)
+    # match = re.fullmatch(pattern, log_line)
+    log_formatter = '{}\\-{}{}{}{}\\s*'.
+    format(pattern[0], pattern[1], pattern[2], pattern[3], pattern[4])
+
+    match = re.fullmatch(log_formatter, log_line)
 
     if match is not None:
         result["status"] = match.group("status")
