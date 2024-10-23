@@ -33,7 +33,7 @@ def parse_input(log_line):
 def update_stats(line, file_size, status_occurrences):
     """
     Parses a line of input, updates the occurrences of different status
-    codes, and returns the sum of the file size and the parsed size 
+    codes, and returns the sum of the file size and the parsed size
     from the input line.
     """
     result = 0
@@ -59,8 +59,12 @@ def print_metrics(file_size, occurrences):
             print("{:s}: {:d}".format(k, occurrences.get(k, 0)), flush=True)
 
 
-if __name__ == '__main__':
-
+def exec():
+    """
+    This Python function reads input lines, updates statistics for file size
+    and status occurrences, and prints metrics every 10 lines or
+    upon interruption.
+    """
     line_count = 0
     file_size = 0
     status_occurrences = {
@@ -84,3 +88,7 @@ if __name__ == '__main__':
                 print_metrics(file_size, status_occurrences)
     except (KeyboardInterrupt, EOFError):
         print_metrics(file_size, status_occurrences)
+
+
+if __name__ == '__main__':
+    exec()
