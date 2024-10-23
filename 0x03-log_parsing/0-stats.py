@@ -8,7 +8,6 @@ def parse_input(log_line):
     Extracts IP address, status code, and size from a log line in a specific
     format and returns them in a dictionary.
     """
-    result = {}
     pattern = (
         r'(?P<ip>\d{1,3}(?:\.\d{1,3}){3}) - '
         r'\[(?P<timestamp>[\d-]+\s[\d:.]+)\] '
@@ -17,30 +16,44 @@ def parse_input(log_line):
         r'(?P<size>\d+)'
     )
     
-    match = re.match(pattern, log_line)
+    result = {
+        'status': 0,
+        'size': 0
+    }
     
-    if match:
-        result[match.group("ip")] = {
-            "status": match.group("status"),
-            "size": match.group("size")
-            }
+    match = re.fullmatch(pattern, log_line)
+    
+    if match is not None:
+        result["status"] = match.group("status")
+        result["size"] = int(match.group("size"))
 
     return result
 
+
+def update_stats(line, file_size, status_occurrences):
+    result = 0
+    res = parse_input(line)
+
+    if res:
+        status = res.get('status', 0)
+        if status in status_occurrences.keys():
+            status_occurrences[status] += 1
+        result = file_size + res['size']
+        
+    return result
 
 def print_metrics(file_size, occurrences):
     """
     Takes a file size and a dictionary of occurrences, and prints out the
     file size and each key-value status occurrence if the value is not empty.
     """
-    print("File size".format(file_size))
-    for k, v in occurrences.items():
-        if v:
-            print("{}: {}".format(k, v))
+    print("File size: {:d}".format(file_size), flush=True)
+    for k in sorted(occurrences.keys()):
+        if occurrences.get(k, 0) > 0:
+            print("{:s}: {:d}".format(k, occurrences.get(k, 0)), flush=True)
 
 
 if __name__ == '__main__':
-    import sys
 
     line_count = 0
     file_size = 0
@@ -56,23 +69,12 @@ if __name__ == '__main__':
     }
 
     try:
-        for line in sys.stdin:
-            if line.rstrip() == 'Exit':
-                break
-
+        while True:
+            line = input()
+            file_size = update_stats(line, file_size, status_occurrences)
             line_count += 1
-            res = parse_input(line)
-
-            for data in res.values():
-                file_size += int(data["size"])
-
-                if data["status"] in status_occurrences:
-                    status_occurrences[data["status"]] += 1
-
-            if line_count == 10:
+            
+            if line_count % 10 == 0:
                 print_metrics(file_size, status_occurrences)
-                line_count = 0
-                file_size = 0
-                status_occurrences = {key: 0 for key in status_occurrences}
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, EOFError):
         print_metrics(file_size, status_occurrences)
