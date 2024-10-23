@@ -17,10 +17,10 @@ def parse_input(log_line):
     # )
     pattern = (
         r'\s*(?P<ip>\S+)\s*',
-        r'\s*\[(?P<date>\d+\-\d+\-\d+ \d+:\d+:\d+\.\d+)\]',
+        r'\s*\[(?P<timestamp>\d+\-\d+\-\d+ \d+:\d+:\d+\.\d+)\]',
         r'\s*"(?P<request>[^"]*)"\s*',
-        r'\s*(?P<status_code>\S+)',
-        r'\s*(?P<file_size>\d+)'
+        r'\s*(?P<status>\S+)',
+        r'\s*(?P<size>\d+)'
     )
 
     result = {
@@ -29,8 +29,8 @@ def parse_input(log_line):
     }
 
     # match = re.fullmatch(pattern, log_line)
-    log_formatter = '{}\\-{}{}{}{}\\s*'.
-    format(pattern[0], pattern[1], pattern[2], pattern[3], pattern[4])
+    log_formatter = '{}\\-{}{}{}{}\\s*'.format(
+        pattern[0], pattern[1], pattern[2], pattern[3], pattern[4])
 
     match = re.fullmatch(log_formatter, log_line)
 
