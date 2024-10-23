@@ -15,14 +15,14 @@ def parse_input(log_line):
         r'(?P<status>\d{3}) '
         r'(?P<size>\d+)'
     )
-    
+
     result = {
         'status': 0,
         'size': 0
     }
-    
+
     match = re.fullmatch(pattern, log_line)
-    
+
     if match is not None:
         result["status"] = match.group("status")
         result["size"] = int(match.group("size"))
@@ -31,6 +31,11 @@ def parse_input(log_line):
 
 
 def update_stats(line, file_size, status_occurrences):
+    """
+    Parses a line of input, updates the occurrences of different status
+    codes, and returns the sum of the file size and the parsed size 
+    from the input line.
+    """
     result = 0
     res = parse_input(line)
 
@@ -39,8 +44,9 @@ def update_stats(line, file_size, status_occurrences):
         if status in status_occurrences.keys():
             status_occurrences[status] += 1
         result = file_size + res['size']
-        
+
     return result
+
 
 def print_metrics(file_size, occurrences):
     """
@@ -73,7 +79,7 @@ if __name__ == '__main__':
             line = input()
             file_size = update_stats(line, file_size, status_occurrences)
             line_count += 1
-            
+
             if line_count % 10 == 0:
                 print_metrics(file_size, status_occurrences)
     except (KeyboardInterrupt, EOFError):
