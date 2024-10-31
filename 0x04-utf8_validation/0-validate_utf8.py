@@ -7,12 +7,6 @@ def validUTF8(data):
     data_len = len(data)
     skipped_chars = 0
 
-    utf8_patterns = {
-        0b11000000: 2,
-        0b11100000: 3,
-        0b11111000: 4
-    }
-
     for i in range(data_len):
         if skipped_chars > 0:
             if data[i] & 0b11000000 != 0b10000000:
@@ -20,20 +14,18 @@ def validUTF8(data):
             skipped_chars -= 1
             continue
 
-        if data[i] <= 0x7F:
-            continue
+        if data[i] & 0b10000000 == 0:
+            skipped_chars = 0
+        elif data[i] & 0b11100000 == 0b11000000:
+            skipped_chars = 1
+        elif data[i] & 0b11110000 == 0b11100000:
+            skipped_chars = 2
+        elif data[i] & 0b11111000 == 0b11110000:
+            skipped_chars = 3
+        else:
+            return False
 
-        matched = False
-
-        for pattern, length in utf8_patterns.items():
-            if data[i] & (0b11111111 << (8 - length)) == pattern:
-                if i + length > data_len:
-                    return False
-                skipped_chars = length - 1
-                matched = True
-                break
-
-        if not matched:
+        if skipped_chars > data_len - i - 1:
             return False
 
     return True
