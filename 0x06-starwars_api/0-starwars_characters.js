@@ -2,40 +2,29 @@
 
 const request = require('request');
 
-if (process.argv.length <= 2) {
-  console.error('Usage: ./0-starwars_characters.js <movie_id>');
-  process.exit(1);
-} else if (isNaN(process.argv[2])) {
-  console.error('The movie ID must be a number');
-  process.exit(1);
-} else {
-  const BASE_URL = 'https://swapi-api.alx-tools.com/api';
-  const movieId = process.argv[2];
+const BASE_URL = 'https://swapi-api.alx-tools.com/api';
 
-  request(`${BASE_URL}/films/${movieId}`, (error, _, body) => {
+if (process.argv.length > 2) {
+
+  request(`${BASE_URL}/films/${process.argv[2]}`, (error, _, body) => {
     if (error) {
-      console.error(error);
-      return;
+      console.log(error);
     }
-
     const characters = JSON.parse(body).characters;
-
     const promises = characters.map((characterUrl) => {
-      return new Promise((resolve, reject) => {
+      new Promise((resolve, reject) => {
         request(characterUrl, (err, _, data) => {
           if (err) {
             reject(err);
-          } else {
-            resolve(JSON.parse(data).name);
           }
+          resolve(JSON.parse(data).name);
         });
       });
     });
-
     Promise.all(promises)
       .then((characterNames) => {
-        characterNames.forEach((name) => console.log(name));
+        console.log(characterNames.join('\n'));
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.log(err));
   });
 }
