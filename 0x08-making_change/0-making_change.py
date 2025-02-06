@@ -18,6 +18,9 @@ def makeChange(coins, total):
     if total <= 0:
         return 0
 
+    if not coins:
+        return -1
+
     while remain > 0:
         if remain >= coins[pos]:
             amount_coins += 1
